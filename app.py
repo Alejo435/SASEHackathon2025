@@ -31,13 +31,18 @@ def home():
     return render_template('index.html')
     # return redirect(url_for('login'))
 
+@app.route('/login')
+def login():
+    return render_template("login.html")
+
+@app.route('/signup')
+def signup():
+    return render_template("signup.html")
+
 @app.route('/chat')
 def chat():
     """Renders the page (chat-menu.html)."""
-    # global logged_in
-    # if logged_in:
     return render_template('chat-menu.html')
-    # return redirect(url_for('login'))
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=80)
