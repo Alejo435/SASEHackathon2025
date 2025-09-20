@@ -3,19 +3,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sunset</title>
-    <link rel="stylesheet" href="/Static/messages.css">
+    <title>Sunset Group Chat</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.min.js"></script>
+    <link rel="stylesheet" href="/static/messages.css">
 </head>
 <body>
 
 
-<div class="chat-menu">
-    <div class = "message-bubble"> 
-        <p>
-            Hi
-        </p>
-</div>
+<div class="chat-menu" id = "messages"></div>
+
+    <div class="input-area">
+        <input id="messageInput" class="text-box" type="text" placeholder="Type a message..." />
+        <button class="send-btn" onclick="sendMessage()">Send</button>
+    </div>
+
+    <script src="{{ url_for('static', filename='chat.js') }}"></script>
 
 </body>
 </html>
