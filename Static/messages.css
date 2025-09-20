@@ -1,0 +1,76 @@
+.message-bubble {
+    padding: 0.5rem 1rem;              /* px-4 py-2 */
+    border-radius: 0.5rem;             /* rounded-lg */
+    max-width: 70%;
+    position: relative;
+    background-color: rgba(255, 255, 255, 0.1); /* like bg-white/10 */
+    border: 1px solid rgba(255, 255, 255, 0.3); /* like border-white/30 */
+    color: var(--color-card-foreground);
+    backdrop-filter: blur(8px);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    margin: 16px;
+    font-family: "Arial", sans-serif;
+    color:white;
+}
+
+
+.message-bubble img {
+    margin-top: 0.25rem;    /* mt-1 */
+    border-radius: 0.5rem;  /* rounded-lg */
+    max-height: 16rem;      /* max-h-64 */
+    object-fit: cover;      /* object-cover */
+    padding: 16px;
+    
+}
+
+
+.message-meta {
+    color: var(--color-muted-foreground);
+}
+
+.message-meta.sent {
+    text-align: right;
+}
+
+.message {
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.message-user {
+    background-color: #d0f0ff;
+    text-align: right;
+}
+
+.message-bot {
+    background-color: #ffe0e0;
+    text-align: left;
+}
+
+.chat-menu{
+background-image: url("https://images.unsplash.com/photo-1702227962580-472018958650?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdW5zZXQlMjBtb3VudGFpbiUyMHJhbmdlJTIwb3JhbmdlfGVufDF8fHx8MTc1ODMxNTE0NXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral");
+background-size: cover;     
+background-position: center; 
+background-repeat: no-repeat;
+flex: 1; 
+overflow-y: auto ;
+gap: 20pt;
+margin: 0;
+height: 100vh;
+padding: 0;
+}
+
+.text-box  {
+    padding: 0.5rem 1rem;              /* px-4 py-2 */
+    border-radius: 0.5rem;             /* rounded-lg */
+    position: relative;
+    background-color: rgba(255, 255, 255, 0.1); /* like bg-white/10 */
+    border: 1px solid rgba(255, 255, 255, 0.3); /* like border-white/30 */
+    color: var(--color-card-foreground);
+    backdrop-filter: blur(8px);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
