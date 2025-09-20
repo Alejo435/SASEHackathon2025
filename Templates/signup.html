@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sunset - Sign Up</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='login_signup.css') }}">
+</head>
+<body>
+  <div class="background"></div>
+
+  <div class="auth-container">
+    <form class="form">
+      <h1 class="logo">☀️ Sunset</h1>
+      <h2>Join Sunset</h2>
+      <p class="subtitle">Start connecting as the sun sets on ordinary social media</p>
+
+      <div class="input-row">
+        <div class="input-group">
+          <input type="text" placeholder="First name" required>
+        </div>
+        <div class="input-group">
+          <input type="text" placeholder="Last name" required>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <input type="email" placeholder="Enter your email" required>
+      </div>
+      <div class="input-group">
+        <input type="password" placeholder="Create a password" required>
+      </div>
+
+      <button type="submit" class="btn">Create Account</button>
+      <p class="switch">Already have an account? <a href="login">Sign in</a></p>
+    </form>
+  </div>
+</body>
+</html>
