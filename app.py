@@ -1,6 +1,7 @@
 import secrets
 import pickle
 import os
+import sys
 from flask import Flask, render_template, url_for, request, redirect, flash
 from flask_login import (
     LoginManager, login_user, logout_user,
@@ -8,11 +9,13 @@ from flask_login import (
 )
 from werkzeug.security import generate_password_hash, check_password_hash
 from database import db, Users, Communities
+import logging
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///coraldb.sqlite3'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.secret_key = "your_secret_key"   # change this in production!
+app.secret_key = "your_secret_key"
+app.logger.setLevel(logging.DEBUG)   
 
 db.init_app(app)
 
@@ -32,8 +35,8 @@ def generate_community_code():
     stores it back, and returns the new code.
     """
     # Load existing codes or create empty list
-    if os.path.exists("community_codes.pkl"):
-        with open("community_codes.pkl", "rb") as f:
+    if os.path.exists("instance/community_codes.pkl"):
+        with open("instance/community_codes.pkl", "rb") as f:
             existing_codes = pickle.load(f)
     else:
         existing_codes = []  # list of codes
@@ -46,7 +49,7 @@ def generate_community_code():
 
     # Add the new code and save
     existing_codes.append(code)
-    with open("community_codes.pkl", "wb") as f:
+    with open("instance/community_codes.pkl", "wb") as f:
         pickle.dump(existing_codes, f)
 
     return code
@@ -59,7 +62,12 @@ with app.app_context():
 @app.route('/')
 def home():
     if current_user.is_authenticated:
-        return render_template('sidebar.html')
+        user_communities = []
+        if current_user.group_ids:
+            user_communities = Communities.query.filter(
+                Communities.code.in_(current_user.group_ids)
+            ).all()
+        return render_template('sidebar.html', user_communities=user_communities)
     return redirect(url_for('login'))
 
 

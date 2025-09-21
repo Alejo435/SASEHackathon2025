@@ -67,8 +67,12 @@ body {
 
 .tab-content {
   font-size: 18px;
+  display: none;
 }
 
+#home {
+  display: block;
+}
 
 /* Main Content */
 .main-content {
