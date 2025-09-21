@@ -11,10 +11,30 @@ socketio = SocketIO(messages)
 chat_history = {}  # { "room_id": [ "user: message", ... ] }
 
 sunset_times = {
-    "general": 0.5 * 60,
-    "sports": 5 * 60,
-    "music": 8 * 60
+    "com1": 0.5 * 60,
+    "com2": 5 * 60,
+    "com3": 8 * 60
 }
+
+
+
+#================================================Routes============================================================
+
+@messages.route('/')
+def index():
+    return render_template('sidebar.html')
+
+@messages.route('/chat')
+def chat():
+    # Get the room name from query parameters; default to "com1"
+    room = request.args.get('room', 'com1')
+
+    # Ensure the room exists in chat history
+    if room not in chat_history:
+        chat_history[room] = []
+
+    # Render only the chat container (messages div + input area)
+    return render_template('chat_container.html', room=room, chat_history=chat_history[room])
 
 
 #================================================Sunset Countdown==================================================
@@ -33,9 +53,7 @@ def countdown_task():
 # Start background thread
 socketio.start_background_task(countdown_task)
 
-@messages.route('/')
-def index():
-    return render_template('chat-menu.html')
+
 
 
 #====================================================Socket/JS Integration===========================================
@@ -53,9 +71,12 @@ def on_join(data):
     if room not in chat_history:
         chat_history[room] = []
 
+
+    emit("chat_history", chat_history[room], to=request.sid)
+
     seconds = sunset_times.get(room, 0)
     emit("sunset_timer", {"room": room, "seconds": seconds})
-
+    
     
 
 
@@ -75,44 +96,46 @@ def handle_message(data):
     msg = data['msg']
 
     # use provided room if available, otherwise default
-    room = data.get('room', 'general')
+    room = data.get('room', 'com1')
 
-    formatted_msg = f"{username}: {msg}"
+    message_obj = {
+        "type": "text",
+        "username": username,
+        "msg": msg
+    }
 
     #save message in history
     if room not in chat_history:
         chat_history[room] = []
-    chat_history[room].append(formatted_msg)
+    chat_history[room].append(message_obj)
 
     #send message to everyone in room
-    send(formatted_msg, to=room)
+    send(message_obj, to=room)
 
 
+@socketio.on('image')
+def handle_image(data):
+    room = data.get('room', 'com1')
+
+    message_obj = {
+        "type": "image",
+        "username": data['username'],
+        "imgData": data['imgData']
+    }
+
+    if room not in chat_history:
+        chat_history[room] = []
+    chat_history[room].append(message_obj)
+
+    emit("image", message_obj, room=room)
 
 
 #for testing with out chat selector
 @socketio.on('connect')
 def on_connect(room = None):
-    if room:
-        join_room(room)
-    else:
-        room = "general"  #default room
-        join_room(room)
-
-    #ensure room exists in history
-    if room not in chat_history:
-        chat_history[room] = []
-
-    #send existing chat history only to the new member
-    emit("chat_history", chat_history[room])
+    print("New client connected")
 
 
-
-@socketio.on("image")
-def handle_image(data):
-    # Rebroadcast to everyone in the same room
-    room = data.get("room", "general")
-    emit("image", data, room=room)
 
 
 #==============================================running API===================================================
