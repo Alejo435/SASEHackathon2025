@@ -1,5 +1,4 @@
 import os
-from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.sqlite import JSON
 from flask_login import UserMixin
@@ -20,4 +19,13 @@ class Users(UserMixin, db.Model):
     def __repr__(self):
         return f"<User {self.email}>"
 
+class Communities(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(150),unique=True, nullable=False)
+    code = db.Column(db.Integer)
+    users = db.Column(JSON)
+    chat_history = db.Column(JSON)
+    
 
+    def __repr__(self):
+        return f"<User {self.email}>"

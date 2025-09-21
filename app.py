@@ -1,12 +1,11 @@
 import os
 from flask import Flask, render_template, url_for, request, redirect, flash
 from flask_login import (
-    LoginManager, UserMixin, login_user, logout_user,
+    LoginManager, login_user, logout_user,
     login_required, current_user
 )
-from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
-from database import db, Users   # your updated model
+from database import db, Users, Communities
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///coraldb.sqlite3'
@@ -29,20 +28,6 @@ def load_user(user_id):
 # ---- Initialize DB with sample user ----
 with app.app_context():
     db.create_all()
-
-#     # Only add a test user if not already present
-#     if not Users.query.filter_by(email="test@example.com").first():
-#         hashed_pw = generate_password_hash("password123")
-#         sample_user = Users(
-#             first_name="Alejandro",
-#             last_name="Otermin",
-#             email="ao@example.com",
-#             password=hashed_pw,
-#             group_ids=[123456, 654321]
-#         )
-#         db.session.add(sample_user)
-#         db.session.commit()
-
 
 # ---- Routes ----
 @app.route('/')
