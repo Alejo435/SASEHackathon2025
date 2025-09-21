@@ -71,7 +71,7 @@ def on_join(data):
     if room not in chat_history:
         chat_history[room] = []
 
-        
+
     emit("chat_history", chat_history[room], to=request.sid)
 
     seconds = sunset_times.get(room, 0)
@@ -98,17 +98,36 @@ def handle_message(data):
     # use provided room if available, otherwise default
     room = data.get('room', 'com1')
 
-    formatted_msg = f"{username}: {msg}"
+    message_obj = {
+        "type": "text",
+        "username": username,
+        "msg": msg
+    }
 
     #save message in history
     if room not in chat_history:
         chat_history[room] = []
-    chat_history[room].append(formatted_msg)
+    chat_history[room].append(message_obj)
 
     #send message to everyone in room
-    send(formatted_msg, to=room)
+    send(message_obj, to=room)
 
 
+@socketio.on('image')
+def handle_image(data):
+    room = data.get('room', 'com1')
+
+    message_obj = {
+        "type": "image",
+        "username": data['username'],
+        "imgData": data['imgData']
+    }
+
+    if room not in chat_history:
+        chat_history[room] = []
+    chat_history[room].append(message_obj)
+
+    emit("image", message_obj, room=room)
 
 
 #for testing with out chat selector
@@ -117,17 +136,6 @@ def on_connect(room = None):
     print("New client connected")
 
 
-@socketio.on("image")
-def handle_image(data):
-    # Rebroadcast to everyone in the same room
-    room = data.get("room", "com1")
-
-    if room not in chat_history:
-        chat_history[room] = []
-
-    chat_history[room].append(f"{data['username']}: [image]")
-
-    emit("image", data, room=room)
 
 
 #==============================================running API===================================================

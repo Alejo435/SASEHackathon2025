@@ -36,22 +36,62 @@ window.addEventListener("DOMContentLoaded", () => {
     sendBtn.addEventListener("click", sendMessage);
 
     //========================= Receive Messages =========================
-    socket.on("message", (msg) => {
+    // socket.on("message", (msg) => {
+    //     const bubble = document.createElement("div");
+    //     bubble.classList.add("message-bubble", msg.startsWith(username + ":") ? "message-user" : "message-bot");
+    //     bubble.textContent = msg;
+    //     messages.appendChild(bubble);
+    //     messages.scrollTop = messages.scrollHeight;
+    // });
+
+    // socket.on("chat_history", (history) => {
+    //   history.forEach(msg => {
+    //       const bubble = document.createElement("div");
+    //       bubble.classList.add("message-bubble", msg.username === username ? "message-user" : "message-bot");
+
+    //       if (msg.type === "text") {
+    //           bubble.textContent = `${msg.username}: ${msg.msg}`;
+    //       } else if (msg.type === "image") {
+    //           const img = document.createElement("img");
+    //           img.src = msg.imgData;
+    //           img.style.maxWidth = "200px";
+    //           img.style.borderRadius = "0.5rem";
+    //           img.classList.add("chat-image");
+    //           if (sunsetTimer.textContent !== "Sunset is here! 🌅") img.style.filter = "blur(5px)";
+    //           bubble.appendChild(img);
+    //       }
+
+    //       messages.appendChild(bubble);
+    //   });
+    //   messages.scrollTop = messages.scrollHeight;
+    // });
+
+    function renderMessage(msg) {
         const bubble = document.createElement("div");
-        bubble.classList.add("message-bubble", msg.startsWith(username + ":") ? "message-user" : "message-bot");
-        bubble.textContent = msg;
+        bubble.classList.add("message-bubble", msg.username === username ? "message-user" : "message-bot");
+
+        if (msg.type === "text") {
+            bubble.textContent = `${msg.username}: ${msg.msg}`;
+        } else if (msg.type === "image") {
+            const img = document.createElement("img");
+            img.src = msg.imgData;
+            img.style.maxWidth = "200px";
+            img.style.borderRadius = "0.5rem";
+            img.classList.add("chat-image");
+            if (sunsetTimer.textContent !== "Sunset is here! 🌅") img.style.filter = "blur(5px)";
+            bubble.appendChild(img);
+        }
+
         messages.appendChild(bubble);
         messages.scrollTop = messages.scrollHeight;
-    });
+    }
+
+    socket.on("message", renderMessage);
+    socket.on("image", renderMessage);
 
     socket.on("chat_history", (history) => {
-        history.forEach(msg => {
-            const bubble = document.createElement("div");
-            bubble.classList.add("message-bubble", msg.startsWith(username + ":") ? "message-user" : "message-bot");
-            bubble.textContent = msg;
-            messages.appendChild(bubble);
-        });
-        messages.scrollTop = messages.scrollHeight;
+        messages.innerHTML = "";
+        history.forEach(renderMessage);
     });
 
     //========================= Sunset Timer =========================
@@ -83,19 +123,19 @@ window.addEventListener("DOMContentLoaded", () => {
         reader.readAsDataURL(file);
     });
 
-    socket.on("image", (data) => {
-        const bubble = document.createElement("div");
-        bubble.classList.add("message-bubble", data.username === username ? "message-user" : "message-bot");
-        const img = document.createElement("img");
-        img.src = data.imgData;
-        img.style.maxWidth = "200px";
-        img.style.borderRadius = "0.5rem";
-        img.classList.add("chat-image");
-        if (sunsetTimer.textContent !== "Sunset is here! 🌅") img.style.filter = "blur(5px)";
-        bubble.appendChild(img);
-        messages.appendChild(bubble);
-        messages.scrollTop = messages.scrollHeight;
-    });
+    // socket.on("image", (data) => {
+    //     const bubble = document.createElement("div");
+    //     bubble.classList.add("message-bubble", data.username === username ? "message-user" : "message-bot");
+    //     const img = document.createElement("img");
+    //     img.src = data.imgData;
+    //     img.style.maxWidth = "200px";
+    //     img.style.borderRadius = "0.5rem";
+    //     img.classList.add("chat-image");
+    //     if (sunsetTimer.textContent !== "Sunset is here! 🌅") img.style.filter = "blur(5px)";
+    //     bubble.appendChild(img);
+    //     messages.appendChild(bubble);
+    //     messages.scrollTop = messages.scrollHeight;
+    // });
 
     //========================= Switching Tabs =========================
     document.querySelectorAll('.tab').forEach(tab => {
