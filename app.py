@@ -1,3 +1,5 @@
+import secrets
+import pickle
 import os
 from flask import Flask, render_template, url_for, request, redirect, flash
 from flask_login import (
@@ -24,6 +26,30 @@ login_manager.login_view = "login"   # redirect unauthorized users here
 def load_user(user_id):
     return Users.query.get(int(user_id))
 
+def generate_community_code():
+    """
+    Generates a unique 6-digit code, ensures it's not already in the pickle file,
+    stores it back, and returns the new code.
+    """
+    # Load existing codes or create empty list
+    if os.path.exists("community_codes.pkl"):
+        with open("community_codes.pkl", "rb") as f:
+            existing_codes = pickle.load(f)
+    else:
+        existing_codes = []  # list of codes
+
+    # Generate a new unique code
+    while True:
+        code = str(secrets.randbelow(900_000) + 100_000)  # 100000–999999
+        if code not in existing_codes:
+            break
+
+    # Add the new code and save
+    existing_codes.append(code)
+    with open("community_codes.pkl", "wb") as f:
+        pickle.dump(existing_codes, f)
+
+    return code
 
 # ---- Initialize DB with sample user ----
 with app.app_context():
@@ -102,6 +128,68 @@ def logout():
     logout_user()
     return redirect(url_for("login"))
 
+@app.route("/join", methods=["GET", "POST"])
+def join_community():
+    if request.method == "POST":
+        name = request.form.get("name").strip()
+        code = request.form.get("code")
+        if code:
+            code = int(code)
+            community = Communities.query.filter_by(name=name).first()
+            if not community:
+                flash("Community does not exist.", "error")
+                return redirect(url_for("join_community"))
+            if len(str(code)) == 6 and code == community.code:
+                if community.code not in current_user.group_ids:
+                    group_ids = current_user.group_ids.copy()
+                    group_ids.append(community.code)
+                    current_user.group_ids = group_ids
+
+                    community_members = community.users.copy()
+                    community_members.append(current_user.email)
+                    community.users = community_members
+                    db.session.commit()
+                    return redirect(url_for("home"))
+                else:
+                    flash("Community already joined.", "error")
+                    return redirect(url_for("join_community"))
+                
+            else:
+                flash("Invalid code. Please enter a 6-digit number.", "error")
+                return redirect(url_for("join_community"))
+        else:
+            return redirect(url_for("join_community"))
+    else:
+        return redirect(url_for("home"))
+
+
+@app.route("/create", methods=["GET", "POST"])
+def create_community():
+    if request.method == "POST":
+        name = request.form.get("community_name").strip()
+        existing_community = Communities.query.filter_by(name=name).first()
+        if existing_community:
+            flash("Name already exists!", "danger")
+            return redirect(url_for("create_community")) 
+        if name:
+            # Add the new community
+            code = generate_community_code()
+            new_community = Communities(
+                name=name,
+                code=code,
+                users=[current_user.email],
+                chat_history=[]
+            )
+            group_ids = current_user.group_ids.copy()
+            group_ids.append(int(new_community.code))
+            current_user.group_ids = group_ids
+            db.session.add(new_community)
+            db.session.commit()
+
+        else:
+            flash("Community name cannot be empty.", "error")
+            return redirect(url_for("create_community"))
+    return redirect(url_for("home"))
 
 @app.route('/chat')
 @login_required

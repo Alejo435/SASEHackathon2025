@@ -17,7 +17,7 @@ class Users(UserMixin, db.Model):
     group_ids = db.Column(JSON)
 
     def __repr__(self):
-        return f"<User {self.email}>"
+        return f"<Email {self.email}>"
 
 class Communities(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -28,4 +28,4 @@ class Communities(db.Model):
     
 
     def __repr__(self):
-        return f"<User {self.email}>"
+        return f"<Name {self.name}>"

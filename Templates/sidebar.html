@@ -48,6 +48,20 @@
                         </div>
                     </div>
 
+                    <!-- Call to Action -->
+                    <div class="card">
+                        <div class="card-content text-center">
+                            <h3>Ready to Connect?</h3>
+                            <p class="cta-description">
+                                Join our community and start building meaningful relationships as the day turns golden.
+                            </p>
+                            <div class="button-group">
+                                <button class="btn btn-primary" onclick="openModal('joinModal')">Join Community</button>
+                                <button class="btn btn-primary" onclick="openModal('createModal')">Create Community</button>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Main About Content -->
                     <div class="two-column-grid">
                         
@@ -127,34 +141,78 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Call to Action -->
-                    <div class="card">
-                        <div class="card-content text-center">
-                            <h3>Ready to Connect?</h3>
-                            <p class="cta-description">
-                                Join our community and start building meaningful relationships as the day turns golden.
-                            </p>
-                            <div class="button-group">
-                                <button class="btn btn-primary">Join Community</button>
-                                <button class="btn btn-primary">Create Community</button>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </div> 
         <div id="com1" class="tab-content" style="display:none;">Welcome To Community 1!</div>
         <div id="com2" class="tab-content" style="display:none;">Welcome To Community 2!</div>
         <div id="com3" class="tab-content" style="display:none;">Welcome To Community 3!</div>
-      </div>
+    </div>
+    <!-- Join Modal -->
+    <div id="joinModal" class="modal">
+        <div class="modal-content">
+        <span class="close" onclick="closeModal('joinModal')">&times;</span>
+        <h3>Join Community</h3>
+        <form action="{{ url_for('join_community') }}" method="POST">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endwith %}
+            <input type="text" name="name" placeholder="Enter community name" required>
+            <input type="text" name="code" maxlength="6" placeholder="Enter 6-digit code" required>
+            <button type="submit">Join</button>
+        </form>
+        </div>
+    </div>
+    
+    <!-- Create Modal -->
+    <div id="createModal" class="modal">
+        <div class="modal-content">
+        <span class="close" onclick="closeModal('createModal')">&times;</span>
+        <h3>Create Community</h3>
+        <form action="{{ url_for('create_community') }}" method="POST">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endwith %}
+            <input type="text" name="community_name" placeholder="Enter community name" required>
+            <button type="submit">Create</button>
+        </form>
+        </div>
+    </div>
 
     <script>
         function openTab(tabName) {
         const contents = document.querySelectorAll('.tab-content');
         contents.forEach(c => c.style.display = 'none');
         document.getElementById(tabName).style.display = 'block';
+        }
+        function openModal(id) {
+        document.getElementById(id).style.display = 'flex';
+        }
+
+        function closeModal(id) {
+        document.getElementById(id).style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            if (event.target === modal) {
+            modal.style.display = 'none';
+            }
+        });
         }
     </script>
 </body>
