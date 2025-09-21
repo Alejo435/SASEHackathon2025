@@ -2,7 +2,7 @@
 
 const socket = io();
 let currentRoom = null;
-let username = prompt("Enter your username:");
+let username = prompt("Enter your username:"); //this is what we gotta find a way to change with login name
 
 //====================================================Chat room functionality======================================
 
@@ -78,3 +78,20 @@ function addMessage(msg) {
 
 
 //====================================================Sunset timer functionality======================================
+
+// Listen for sunset timer updates from server
+socket.on("sunset_timer", (data) => {
+    const secondsRemaining = data.seconds;
+
+    if (secondsRemaining <= 0) {
+        document.getElementById("sunsetTimer").textContent = "Sunset is here! 🌅";
+        return;
+    }
+
+    const h = Math.floor(secondsRemaining / 3600);
+    const m = Math.floor((secondsRemaining % 3600) / 60);
+    const s = secondsRemaining % 60;
+
+    document.getElementById("sunsetTimer").textContent =
+        `Sunset in: ${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+});
