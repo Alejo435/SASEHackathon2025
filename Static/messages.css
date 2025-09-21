@@ -12,6 +12,19 @@
         font-family: "Arial", sans-serif;
     }
 
+    .message-user {
+        align-self: flex-start; /* Align to left */
+        background-color: orange;
+        color: black;
+    }
+
+
+    .message-other{
+        align-self: flex-end; /* Align to right */
+    }
+
+
+
     .message-bubble img {
         margin-top: 0.25rem;
         border-radius: 0.5rem;
@@ -41,6 +54,9 @@
     }
 
     .chat-menu{
+
+        padding-top: 50px; /* height of sunset timer */
+        padding-bottom: 70px; /* space for input-area */
         background-image: url("https://images.unsplash.com/photo-1702227962580-472018958650?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdW5zZXQlMjBtb3VudGFpbiUyMHJhbmdlJTIwb3JhbmdlfGVufDF8fHx8MTc1ODMxNTE0NXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral");
         background-size: cover;     
         background-position: center; 
@@ -54,7 +70,8 @@
         width: 100vw;      /* full viewport width */
         height: 100vh;     /* full viewport height */
         margin: 0;
-        padding: 0;
+        flex-direction: column; /*for messages being on either side */
+       
     }
 
     .chat-menu::before { /*::before applues elements before content of .chat-menu */
@@ -126,4 +143,20 @@
         margin: 0;
         padding: 0;
         height: 100%;
+    }
+
+    .sunset-timer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        text-align: center;
+        padding: 10px;
+        font-family: Arial, sans-serif;
+        font-size: 1.2rem;
+        background-color: #333;
+        color: white;
+        z-index: 100;
+        box-sizing: border-box;
     }
