@@ -5,157 +5,166 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sunset</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='messages.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.min.js"></script>
+    <script>
+        const CURRENT_USER = "{{ username|e }}"; // Escaped to prevent XSS
+    </script>
+    <script src="{{ url_for('static', filename='chat.js') }}"></script>
 </head>
 <body>
-    <!--Header for Communities-->
-    <div class="sidebar">
-        <div class="sidebar-header">Communities</div>
 
-        <!--Scrollable list of communities-->
-        <div class="sidebar-tabs">
-            <div class="tab" onclick="openTab('home')">Home</div>
-            {% for community in user_communities %}
-                <div class="tab" onclick="openTab('com{{ community.id }}')">
-                {{ community.name }}
-                </div>
-            {% endfor %}
-            
+<!-- Sidebar with communities -->
+<div class="sidebar">
+    <div class="sidebar-header">Communities</div>
 
-        </div>
-        <!--Sign out button at the bottom of side bar-->
-        <div class="sidebar-footer">
-            <a href="/logout" class="tab">Sign Out</a>
-        </div>
-    </div>
-
-    
-    <div class="content">
-        <div id="home" class="tab-content">
-                    <!-- Main Content -->
-            <div class="main-content">
-                <div class="content-wrapper">
-                    
-                    <!-- Header Card -->
-                    <div class="card">
-                        <div class="card-content text-center">
-                            <div class="header-title">
-                                <span class="sun-icon">☀️</span>
-                                <h1>Sunset</h1>
-                            </div>
-                            <h2 class="subtitle">About Our Journey</h2>
-                            <p class="description">
-                                Connecting hearts as the day turns golden. We believe in the magic of meaningful connections 
-                                and the beauty of shared moments under painted skies.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Call to Action -->
-                    <div class="card">
-                        <div class="card-content text-center">
-                            <h3>Ready to Connect?</h3>
-                            <p class="cta-description">
-                                Join our community and start building meaningful relationships as the day turns golden.
-                            </p>
-                            <div class="button-group">
-                                <button class="btn btn-primary" onclick="openModal('joinModal')">Join Community</button>
-                                <button class="btn btn-primary" onclick="openModal('createModal')">Create Community</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Main About Content -->
-                    <div class="two-column-grid">
-                        
-                        <!-- Our Story -->
-                        <div class="card">
-                            <div class="card-content">
-                                <div class="section-header">
-                                    <span class="icon">💖</span>
-                                    <h3>Our Story</h3>
-                                </div>
-                                <p class="card-text">
-                                    Born from the simple belief that the most beautiful connections happen when the day 
-                                    meets the night, Sunset was created to bring people together in moments of natural wonder.
-                                </p>
-                                <p class="card-text">
-                                    Every sunset is unique, just like every friendship. We're here to help you discover 
-                                    those special bonds that light up your world.
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Our Mission -->
-                        <div class="card">
-                            <div class="card-content">
-                                <div class="section-header">
-                                    <span class="icon">🎯</span>
-                                    <h3>Our Mission</h3>
-                                </div>
-                                <p class="card-text">
-                                    To create a platform where authentic relationships flourish, where every interaction 
-                                    is as warm and welcoming as a golden sunset.
-                                </p>
-                                <p class="card-text">
-                                    We're building more than just connections – we're crafting experiences that remind 
-                                    us of life's simple, beautiful moments.
-                                </p>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <!-- Team Section -->
-                    <div class="card">
-                        <div class="card-content">
-                            <div class="section-header centered">
-                                <span class="icon">👥</span>
-                                <h3>Meet Our Team</h3>
-                            </div>
-                            
-                            <div class="team-grid">
-                                <div class="team-member">
-                                    <div class="avatar avatar-1">
-                                        <span>YF</span>
-                                    </div>
-                                    <h4>Yanis Fellache</h4>
-                                    <p class="role">Backend Engineer</p>
-                                    <p class="bio">Passionate about human connections</p>
-                                </div>
-                                
-                                <div class="team-member">
-                                    <div class="avatar avatar-2">
-                                        <span>AO</span>
-                                    </div>
-                                    <h4>Alejandro Otermin</h4>
-                                    <p class="role">Frontend Engineer</p>
-                                    <p class="bio">Creating beautiful user experiences</p>
-                                </div>
-                                
-                                <div class="team-member">
-                                    <div class="avatar avatar-3">
-                                        <span>EE</span>
-                                    </div>
-                                    <h4>Ege Erdag</h4>
-                                    <p class="role">Fullstack Engineer</p>
-                                    <p class="bio">Building the future of connection</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> 
+    <!-- Scrollable list of communities -->
+    <div class="sidebar-tabs">  
+        <div class="tab" onclick="openTab('home')">Home</div>
         {% for community in user_communities %}
-            <div id="com{{ community.id }}" class="tabcontent" style="display:none;">
-                <h3>{{ community.name }}</h3>
-                <p>Welcome to {{ community.name }}!</p>
-            </div>
+            <div class="tab" data-room="com{{ community.id }}">{{ community.name }}</div>
         {% endfor %}
     </div>
-    <!-- Join Modal -->
-    <div id="joinModal" class="modal">
-        <div class="modal-content">
+
+    <!-- Sign out button at the bottom -->
+    <div class="sidebar-footer">
+        <a href="/logout" class="tab">Sign Out</a>
+    </div>
+</div>
+
+<!-- Main content -->
+<div class="content">
+    <!-- Home tab content -->
+    <div id="home" class="tab-content">
+        <div class="main-content">
+            <div class="content-wrapper">
+                
+                <!-- Header Card -->
+                <div class="card">
+                    <div class="card-content text-center">
+                        <div class="header-title">
+                            <span class="sun-icon">☀️</span>
+                            <h1>Sunset</h1>
+                        </div>
+                        <h2 class="subtitle">About Our Journey</h2>
+                        <p class="description">
+                            Connecting hearts as the day turns golden. We believe in the magic of meaningful connections 
+                            and the beauty of shared moments under painted skies.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Two-column section: Our Story & Mission -->
+                <div class="two-column-grid">
+                    <!-- Our Story -->
+                    <div class="card">
+                        <div class="card-content">
+                            <div class="section-header">
+                                <span class="icon">💖</span>
+                                <h3>Our Story</h3>
+                            </div>
+                            <p class="card-text">
+                                Born from the simple belief that the most beautiful connections happen when the day 
+                                meets the night, Sunset was created to bring people together in moments of natural wonder.
+                            </p>
+                            <p class="card-text">
+                                Every sunset is unique, just like every friendship. We're here to help you discover 
+                                those special bonds that light up your world.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Our Mission -->
+                    <div class="card">
+                        <div class="card-content">
+                            <div class="section-header">
+                                <span class="icon">🎯</span>
+                                <h3>Our Mission</h3>
+                            </div>
+                            <p class="card-text">
+                                To create a platform where authentic relationships flourish, where every interaction 
+                                is as warm and welcoming as a golden sunset.
+                            </p>
+                            <p class="card-text">
+                                We're building more than just connections – we're crafting experiences that remind 
+                                us of life's simple, beautiful moments.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team Section -->
+                <div class="card">
+                    <div class="card-content">
+                        <div class="section-header centered">
+                            <span class="icon">👥</span>
+                            <h3>Meet Our Team</h3>
+                        </div>
+                        <div class="team-grid">
+                            <div class="team-member">
+                                <div class="avatar avatar-1"><span>YF</span></div>
+                                <h4>Yanis Fellache</h4>
+                                <p class="role">Backend Engineer</p>
+                                <p class="bio">Passionate about human connections</p>
+                            </div>
+                            <div class="team-member">
+                                <div class="avatar avatar-2"><span>AO</span></div>
+                                <h4>Alejandro Otermin</h4>
+                                <p class="role">Frontend Engineer</p>
+                                <p class="bio">Creating beautiful user experiences</p>
+                            </div>
+                            <div class="team-member">
+                                <div class="avatar avatar-3"><span>EE</span></div>
+                                <h4>Ege Erdag</h4>
+                                <p class="role">Fullstack Engineer</p>
+                                <p class="bio">Building the future of connection</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Call to Action -->
+                <div class="card">
+                    <div class="card-content text-center">
+                        <h3>Ready to Connect?</h3>
+                        <p class="cta-description">
+                            Join our community and start building meaningful relationships as the day turns golden.
+                        </p>
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="openModal('joinModal')">Join Community</button>
+                            <button class="btn btn-primary" onclick="openModal('createModal')">Create Community</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Dynamic community content -->
+    {% for community in user_communities %}
+        <div id="com{{ community.id }}" class="tab-content" style="display:none;">
+            <h3>{{ community.name }}</h3>
+            <p>Welcome to {{ community.name }}!</p>
+        </div>
+    {% endfor %}
+
+    <!-- Shared Chat Container for all rooms -->
+    <div id="chat-container" class="tab-content" style="display:none;">
+        <div id="messages" class="chat-menu"></div>
+        <div class="input-area">
+            <input id="messageInput" class="text-box" type="text" placeholder="Type a message..." />
+            <input type="file" id="imageInput" accept="image/*" style="display:none">
+            <button id="uploadBtn" class="send-btn">📤 Upload Img</button>
+            <button id="sendBtn" class="send-btn">Send</button>
+        </div>
+        <div class="sunset-timer" id="sunsetTimer">Sunset in: --:--:--</div>
+    </div>
+</div>
+
+<!-- Join Modal -->
+<div id="joinModal" class="modal">
+    <div class="modal-content">
         <span class="close" onclick="closeModal('joinModal')">&times;</span>
         <h3>Join Community</h3>
         <form action="{{ url_for('join_community') }}" method="POST">
@@ -172,12 +181,12 @@
             <input type="text" name="code" maxlength="6" placeholder="Enter 6-digit code" required>
             <button type="submit">Join</button>
         </form>
-        </div>
     </div>
-    
-    <!-- Create Modal -->
-    <div id="createModal" class="modal">
-        <div class="modal-content">
+</div>
+
+<!-- Create Modal -->
+<div id="createModal" class="modal">
+    <div class="modal-content">
         <span class="close" onclick="closeModal('createModal')">&times;</span>
         <h3>Create Community</h3>
         <form action="{{ url_for('create_community') }}" method="POST">
@@ -193,32 +202,34 @@
             <input type="text" name="community_name" placeholder="Enter community name" required>
             <button type="submit">Create</button>
         </form>
-        </div>
     </div>
+</div>
 
-    <script>
-        function openTab(tabName) {
+<script>
+    function openTab(tabName) {
         const contents = document.querySelectorAll('.tab-content');
         contents.forEach(c => c.style.display = 'none');
         document.getElementById(tabName).style.display = 'block';
-        }
-        function openModal(id) {
+    }
+
+    function openModal(id) {
         document.getElementById(id).style.display = 'flex';
-        }
+    }
 
-        function closeModal(id) {
+    function closeModal(id) {
         document.getElementById(id).style.display = 'none';
-        }
+    }
 
-        // Close modal when clicking outside
-        window.onclick = function(event) {
+    // Close modal when clicking outside
+    window.onclick = function(event) {
         const modals = document.querySelectorAll('.modal');
         modals.forEach(modal => {
             if (event.target === modal) {
-            modal.style.display = 'none';
+                modal.style.display = 'none';
             }
         });
-        }
-    </script>
+    }
+</script>
+
 </body>
 </html>

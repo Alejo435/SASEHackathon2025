@@ -2,7 +2,7 @@ window.addEventListener("DOMContentLoaded", () => {
     //========================= Socket & User Setup =========================
     const socket = io();
     let currentRoom = null; 
-    let username = prompt("Enter your username:"); 
+    let username = CURRENT_USER;
 
     //========================= DOM Elements =========================
     const messages = document.getElementById("messages"); 
