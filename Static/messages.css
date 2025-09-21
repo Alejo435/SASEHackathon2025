@@ -44,6 +44,11 @@
         transition: filter 0.5s ease;
     }
 
+    .tab.active {
+        background-color: rgba(255,255,255,0.2);
+        font-weight: bold;
+    }
+
     .message-meta {
         color: var(--color-muted-foreground);
         font-size: 0.8rem;
@@ -58,7 +63,7 @@
         content: "";
         position: absolute;
         top: 0; left: 0;
-        width: 100%;
+        width: auto;
         height: 100%;
         background: rgba(0, 0, 0, 0.2); /* slight dark overlay */
         z-index: 0;
@@ -68,16 +73,17 @@
         position: relative; 
         padding-top: 60px;  /* matches .sunset-timer height */
         padding-bottom: 70px; /* for input-area */
-        background-image: url("https://images.unsplash.com/photo-1702227962580-472018958650?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdW5zZXQlMjBtb3VudGFpbiUyMHJhbmdlJTIwb3JhbmdlfGVufDF8fHx8MTc1ODMxNTE0NXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral");
         background-size: cover;     
         background-position: center; 
         background-repeat: no-repeat;
         flex: 1; 
         overflow-y: auto;
-        width: 100vw;
-        height: 100vh;
         margin: 0;
         flex-direction: column;
+        margin-left: 250px;   /* same as sidebar width */
+        width: auto;
+        height: 100vh;
+        overflow-x: hidden;
     }
 
     .text-box {
@@ -96,10 +102,12 @@
     }
 
     .input-area {
+    
         position: fixed;
         bottom: 0;
-        left: 0;
-        width: 100%;
+        left: 250px;
+        right: 0; 
+        width: auto;
         padding: 10px;
         display: flex;
         gap: 10px;
@@ -146,8 +154,9 @@
     .sunset-timer {
         position: fixed; /* keeps it pinned at top */
         top: 0;
-        left: 0;
-        width: 100%;
+        left: 250px; 
+        right: 0;
+        width: auto;
         height: 60px;
         z-index: 10; /* ensures it stays above bubbles */
         text-align: center;

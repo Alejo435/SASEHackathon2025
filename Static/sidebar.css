@@ -10,7 +10,11 @@ body {
   }
   
 .sidebar {
-  width: 200px;
+  position: fixed; 
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 250px; 
   background-color: rgba(30, 30, 30, 0.8); 
   color: white;
   display: flex;
@@ -20,6 +24,15 @@ body {
   overflow-y: auto;        /* enables vertical scrolling */
   overflow-x: hidden;      /* hide horizontal scroll */
 }
+
+.content {
+    margin-left: 250px; /* equal to sidebar width */
+    padding: 20px;
+    height: 100vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
 .sidebar::-webkit-scrollbar {
   width: 6px;              /* scrollbar width */
 }

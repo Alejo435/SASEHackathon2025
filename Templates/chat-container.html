@@ -1,0 +1,22 @@
+<!-- chat_container.html -->
+<div id="chat-container">
+    <!-- Sunset timer -->
+    <div class="sunset-timer" id="sunsetTimer">
+        Sunset in: --:--:--
+    </div>
+
+    <!-- Chat messages -->
+    <div class="chat-menu" id="messages"></div>
+
+    <!-- Input area -->
+    <div class="input-area">
+        <input id="messageInput" class="text-box" type="text" placeholder="Type a message..." />
+
+        <input type="file" id="imageInput" accept="image/*" style="display:none">
+        <button id="uploadBtn" class="send-btn">
+             📤 Upload Img
+        </button>
+
+        <button class="send-btn" onclick="sendMessage()">Send</button>
+    </div>
+</div>

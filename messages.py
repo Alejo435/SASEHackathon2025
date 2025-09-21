@@ -11,11 +11,39 @@ socketio = SocketIO(messages)
 chat_history = {}  # { "room_id": [ "user: message", ... ] }
 
 sunset_times = {
-    "general": 0.5 * 60,
+    "com1": 0.5 * 60,
     "sports": 5 * 60,
     "music": 8 * 60
 }
 
+
+
+#================================================Routes============================================================
+
+@messages.route('/')
+def index():
+    return render_template('sidebar.html')
+
+@messages.route('/chat')
+def chat():
+    # Get the room name from query parameters; default to "com1"
+    room = request.args.get('room', 'com1')
+
+    # Ensure the room exists in chat history
+    if room not in chat_history:
+        chat_history[room] = []
+
+    # Render only the chat container (messages div + input area)
+    return render_template('chat_container.html', room=room, chat_history=chat_history[room])
+
+# @messages.route('/chat')
+# def chat():
+#     room = request.args.get('room', 'general')
+#     return render_template('chat-menu.html', room=room)
+
+# @messages.route('/sidebar')
+# def sidebar():
+#     return render_template('sidebar.html')
 
 #================================================Sunset Countdown==================================================
 def countdown_task():
@@ -33,9 +61,7 @@ def countdown_task():
 # Start background thread
 socketio.start_background_task(countdown_task)
 
-@messages.route('/')
-def index():
-    return render_template('chat-menu.html')
+
 
 
 #====================================================Socket/JS Integration===========================================
@@ -55,7 +81,7 @@ def on_join(data):
 
     seconds = sunset_times.get(room, 0)
     emit("sunset_timer", {"room": room, "seconds": seconds})
-
+    
     
 
 
@@ -75,7 +101,7 @@ def handle_message(data):
     msg = data['msg']
 
     # use provided room if available, otherwise default
-    room = data.get('room', 'general')
+    room = data.get('room', 'com1')
 
     formatted_msg = f"{username}: {msg}"
 
@@ -96,7 +122,7 @@ def on_connect(room = None):
     if room:
         join_room(room)
     else:
-        room = "general"  #default room
+        room = "com1"  #default room
         join_room(room)
 
     #ensure room exists in history
@@ -111,7 +137,13 @@ def on_connect(room = None):
 @socketio.on("image")
 def handle_image(data):
     # Rebroadcast to everyone in the same room
-    room = data.get("room", "general")
+    room = data.get("room", "com1")
+
+    if room not in chat_history:
+        chat_history[room] = []
+
+    chat_history[room].append(f"{data['username']}: [image]")
+
     emit("image", data, room=room)
 
 

@@ -1,170 +1,110 @@
+window.addEventListener("DOMContentLoaded", () => {
+    //========================= Socket & User Setup =========================
+    const socket = io();
+    let currentRoom = null; 
+    let username = prompt("Enter your username:"); 
 
+    //========================= DOM Elements =========================
+    const messages = document.getElementById("messages"); 
+    const input = document.getElementById("messageInput"); 
+    const uploadBtn = document.getElementById("uploadBtn");
+    const imageInput = document.getElementById("imageInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const chatContainer = document.getElementById("chat-container");
+    const sunsetTimer = document.getElementById("sunsetTimer");
 
-const socket = io();
-let currentRoom = null;
-let username = prompt("Enter your username:"); //this is what we gotta find a way to change with login name
-let remainingTime = 0;
+    //========================= Chat Room Functionality =========================
+    function joinRoom(room) {
+        if (currentRoom) socket.emit("leave", { username, room: currentRoom });
 
-//====================================================Chat room functionality======================================
-
-const messages = document.getElementById("messages"); 
-//getElementId looks through html to find elements with the attribute
-const input = document.getElementById("messageInput"); 
-
-
-
-// Join a room
-function joinRoom(room) {
-  if (currentRoom) {
-    socket.emit("leave", { username, room: currentRoom });
-  }
-
-  currentRoom = room;
-  socket.emit("join", { username, room }); //event JS sneds to be used in Flask API
-  document.getElementById("messages").innerHTML = ""; // clear old chat
-}
-
-
-
-//function to send messages from your computer
-function sendMessage() {
-  const msg = input.value;
-  if (msg.trim() !== "") {
-    const roomToUse = currentRoom || "general";
-    socket.emit("message", { username, msg, room: roomToUse });
-    //TODO rn frontend fine like this, but when we add selector must change to
-    //socket.emit("message", { username, msg, room: "sports" }); for example
-    input.value = "";
-  }
-}
-
-// Receive messages
-socket.on("message", (msg) => {
-  const bubble = document.createElement("div");
-  bubble.classList.add("message-bubble"); //gets CSS formating
-
-  if (msg.startsWith(username + ":")) {
-    bubble.classList.add("message-user");
-  } else {
-    bubble.classList.add("message-bot");
-  }
-
-  bubble.textContent = msg;
-  messages.appendChild(bubble);
-  messages.scrollTop = messages.scrollHeight;
-});
-
-
-//for retreiving past chat history
-socket.on("chat_history", (history) => {
-  history.forEach((msg) => addMessage(msg));
-});
-
-//function to create message bubbles from past messages
-function addMessage(msg) {
-  const bubble = document.createElement("div");
-  bubble.classList.add("message-bubble");
-
-  // Always add either user or bot class
-  if (msg && msg.startsWith(username + ":")) {
-    bubble.classList.add("message-user");
-  } else {
-    bubble.classList.add("message-bot");
-  }
-
-  bubble.textContent = msg;
-  messages.appendChild(bubble);
-  messages.scrollTop = messages.scrollHeight;
-  
-
-}
-
-
-
-//====================================================Sunset timer functionality======================================
-
-// Listen for sunset timer updates from server
-socket.on("sunset_timer", (data) => {
-    remainingTime = data.seconds; // keep track globally
-
-    if (remainingTime <= 0) {
-        document.getElementById("sunsetTimer").textContent = "Sunset is here! 🌅";
-
-        // Unblur all images in chat
-        document.querySelectorAll("#messages img.blurred").forEach(img => {
-            img.classList.remove("blurred");
-        });
-
-        return;
+        currentRoom = room;
+        socket.emit("join", { username, room });
+        messages.innerHTML = "";
+        chatContainer.style.display = "block";
+        document.getElementById("home").style.display = "none";
     }
 
-    const h = Math.floor(remainingTime / 3600);
-    const m = Math.floor((remainingTime % 3600) / 60);
-    const s = remainingTime % 60;
+    function sendMessage() {
+        const msg = input.value;
+        if (msg.trim() !== "") {
+            socket.emit("message", { username, msg, room: currentRoom });
+            input.value = "";
+        }
+    }
+    sendBtn.addEventListener("click", sendMessage);
 
-    document.getElementById("sunsetTimer").textContent =
-        `Sunset in: ${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+    //========================= Receive Messages =========================
+    socket.on("message", (msg) => {
+        const bubble = document.createElement("div");
+        bubble.classList.add("message-bubble", msg.startsWith(username + ":") ? "message-user" : "message-bot");
+        bubble.textContent = msg;
+        messages.appendChild(bubble);
+        messages.scrollTop = messages.scrollHeight;
+    });
+
+    socket.on("chat_history", (history) => {
+        history.forEach(msg => {
+            const bubble = document.createElement("div");
+            bubble.classList.add("message-bubble", msg.startsWith(username + ":") ? "message-user" : "message-bot");
+            bubble.textContent = msg;
+            messages.appendChild(bubble);
+        });
+        messages.scrollTop = messages.scrollHeight;
+    });
+
+    //========================= Sunset Timer =========================
+    socket.on("sunset_timer", (data) => {
+        const seconds = data.seconds;
+        if (seconds <= 0) {
+            sunsetTimer.textContent = "Sunset is here! 🌅";
+            document.querySelectorAll(".chat-image").forEach(img => img.style.filter = "none");
+            return;
+        }
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = seconds % 60;
+        sunsetTimer.textContent = `Sunset in: ${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+    });
+
+    //========================= Image Upload =========================
+    uploadBtn.addEventListener("click", () => imageInput.click());
+
+    imageInput.addEventListener("change", (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+        const ext = file.name.split(".").pop().toLowerCase();
+        const allowed = ["jpg","jpeg","png","gif","webp"];
+        if (!allowed.includes(ext)) return alert("Only images allowed!");
+
+        const reader = new FileReader();
+        reader.onload = e => socket.emit("image", { username, room: currentRoom, imgData: e.target.result });
+        reader.readAsDataURL(file);
+    });
+
+    socket.on("image", (data) => {
+        const bubble = document.createElement("div");
+        bubble.classList.add("message-bubble", data.username === username ? "message-user" : "message-bot");
+        const img = document.createElement("img");
+        img.src = data.imgData;
+        img.style.maxWidth = "200px";
+        img.style.borderRadius = "0.5rem";
+        img.classList.add("chat-image");
+        if (sunsetTimer.textContent !== "Sunset is here! 🌅") img.style.filter = "blur(5px)";
+        bubble.appendChild(img);
+        messages.appendChild(bubble);
+        messages.scrollTop = messages.scrollHeight;
+    });
+
+    //========================= Switching Tabs =========================
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            const isHome = tab.dataset.home === "true";
+            const room = tab.dataset.room;
+
+            document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+
+            if (isHome) document.getElementById('home').style.display = 'block';
+            else if (room) joinRoom(room);
+        });
+    });
 });
-
-
-
-//====================================================Image functionality======================================
-
-
-window.onload = () => {
-  const uploadBtn = document.getElementById("uploadBtn");
-  const imageInput = document.getElementById("imageInput");
-  const roomToUse = currentRoom || "general"; 
-
-
-uploadBtn.addEventListener("click", () => { //whenever user clicks uploadBTN this will run
-  imageInput.click(); // open file picker
-});
-
-imageInput.addEventListener("change", (event) => { //change fires whenever user selects file in explorer
-  console.log("File input change triggered"); 
-  const file = event.target.files[0]; //grabs first file
-  if (file) {
-    console.log("File type:", file.type);
-    const allowedExtensions = ["jpg", "jpeg", "png", "gif", "webp"];
-    const ext = file.name.split(".").pop().toLowerCase();
-
-    if (allowedExtensions.includes(ext)) {
-      const reader = new FileReader(); //FileReader is built in JS API to read selected files
-      reader.onload = function(e) { //defines what happens after file is read (e.target.results will contain file conetent)
-        // Send base64 image data to server
-        socket.emit("image", { username, room: roomToUse, imgData: e.target.result });
-
-      };
-    
-    reader.readAsDataURL(file); //starts reading file and when done base64 string sent to server
-  }
-    
-  }
-});
-
-// ====== Receive images ======
-socket.on("image", (data) => { //
-  const bubble = document.createElement("div");
-  bubble.classList.add("message-bubble");
-
-  if (data.username === username) {
-    bubble.classList.add("message-user");
-  } else {
-    bubble.classList.add("message-bot");
-  }
-
-  const img = document.createElement("img");
-  img.src = data.imgData;
-  img.style.maxWidth = "200px";
-  img.style.borderRadius = "0.5rem";
-
-  if (remainingTime > 0) {   // we'll define remainingTime below
-    img.classList.add("blurred");
-  }
-
-  bubble.appendChild(img);
-  messages.appendChild(bubble);
-  messages.scrollTop = messages.scrollHeight;
-});
-}

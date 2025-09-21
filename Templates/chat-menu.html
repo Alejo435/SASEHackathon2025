@@ -1,5 +1,4 @@
 <!DOCTYPE html> 
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -10,25 +9,51 @@
 </head>
 <body>
 
+<!-- Sunset timer -->
 <div class="sunset-timer" id="sunsetTimer">
     Sunset in: --:--:--
 </div>
 
+<!-- Chat container; we will add a data-room attribute dynamically -->
+<div class="chat-menu" id="messages" data-room="com1"></div>
 
-<div class="chat-menu" id = "messages"></div>
+<!-- Input area -->
+<div class="input-area">
+    <input id="messageInput" class="text-box" type="text" placeholder="Type a message..." />
+    <input type="file" id="imageInput" accept="image/*" style="display:none">
+    <button id="uploadBtn" class="send-btn">📤 Upload Img</button>
+    <button class="send-btn" onclick="sendMessage()">Send</button>
+</div>
 
-    <div class="input-area">
-        <input id="messageInput" class="text-box" type="text" placeholder="Type a message..." />
+<!-- Community tabs (can be reused on sidebar.html too) -->
+<div class="sidebar-tabs">
+    <div class="tab" data-room="com1">Community 1</div>
+    <div class="tab" data-room="com2">Community 2</div>
+    <div class="tab" data-room="com3">Community 3</div>
+</div>
 
-        <input type="file" id="imageInput" accept="image/*" style="display:none">
-        <button id = "uploadBtn" class="send-btn">
-             📤 Upload Img
-        </button>
+<script>
+    // =================== Community Tab Switching ===================
+    document.querySelectorAll('.tab[data-room]').forEach(tab => {
+        tab.addEventListener('click', async () => {
+            const room = tab.getAttribute('data-room');
 
-        <button class="send-btn" onclick="sendMessage()">Send</button>
-    </div>
+            // Fetch the chat HTML for the selected community
+            const response = await fetch(`/chat?room=${room}`);
+            const html = await response.text();
 
-    <script src="{{ url_for('static', filename='chat.js') }}"></script>
+            // Replace chat container with new content
+            const chatContainer = document.getElementById('messages');
+            chatContainer.innerHTML = html;
+            chatContainer.setAttribute("data-room", room);
+
+            // Re-initialize chat.js for the new container
+            const script = document.createElement('script');
+            script.src = "/static/chat.js";
+            document.body.appendChild(script);
+        });
+    });
+</script>
 
 </body>
 </html>
