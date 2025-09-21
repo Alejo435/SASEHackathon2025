@@ -25,6 +25,10 @@ body {
   text-align: left;
   cursor: default;         
 }
+.sidebar .tab.logout {
+  margin-top: auto;
+  background-color: rgba(255, 0, 0, 0.2);
+}
 .tab {
   text-align: center;
   font-family: "Montserrat";
@@ -35,6 +39,7 @@ body {
   color: white;
   text-decoration: none;
 }
+
 
 .tab:hover {
   background-color: rgba(255, 255, 255, 0.1);
