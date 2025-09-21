@@ -12,8 +12,8 @@ chat_history = {}  # { "room_id": [ "user: message", ... ] }
 
 sunset_times = {
     "com1": 0.5 * 60,
-    "sports": 5 * 60,
-    "music": 8 * 60
+    "com2": 5 * 60,
+    "com3": 8 * 60
 }
 
 
@@ -36,14 +36,6 @@ def chat():
     # Render only the chat container (messages div + input area)
     return render_template('chat_container.html', room=room, chat_history=chat_history[room])
 
-# @messages.route('/chat')
-# def chat():
-#     room = request.args.get('room', 'general')
-#     return render_template('chat-menu.html', room=room)
-
-# @messages.route('/sidebar')
-# def sidebar():
-#     return render_template('sidebar.html')
 
 #================================================Sunset Countdown==================================================
 def countdown_task():
@@ -78,6 +70,9 @@ def on_join(data):
     # Ensure room exists in chat history
     if room not in chat_history:
         chat_history[room] = []
+
+        
+    emit("chat_history", chat_history[room], to=request.sid)
 
     seconds = sunset_times.get(room, 0)
     emit("sunset_timer", {"room": room, "seconds": seconds})
@@ -119,19 +114,7 @@ def handle_message(data):
 #for testing with out chat selector
 @socketio.on('connect')
 def on_connect(room = None):
-    if room:
-        join_room(room)
-    else:
-        room = "com1"  #default room
-        join_room(room)
-
-    #ensure room exists in history
-    if room not in chat_history:
-        chat_history[room] = []
-
-    #send existing chat history only to the new member
-    emit("chat_history", chat_history[room])
-
+    print("New client connected")
 
 
 @socketio.on("image")

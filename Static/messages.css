@@ -20,6 +20,7 @@
         color: white;
         text-align: right;
         margin-left: auto;
+        margin-right: 12px;
     }
 
 
@@ -27,6 +28,7 @@
         align-self: flex-end; /* Align to right */
         text-align: left;
         margin-right: auto;
+        margin-left: 12px;
     }
 
 

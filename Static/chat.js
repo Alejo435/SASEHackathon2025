@@ -19,7 +19,9 @@ window.addEventListener("DOMContentLoaded", () => {
 
         currentRoom = room;
         socket.emit("join", { username, room });
+
         messages.innerHTML = "";
+
         chatContainer.style.display = "block";
         document.getElementById("home").style.display = "none";
     }
