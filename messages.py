@@ -1,4 +1,5 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
+from datetime import datetime, timedelta
 
 #  socetio adds WebSocket support for flask (two way messages)
 from flask_socketio import SocketIO, SocketIO, join_room, leave_room, send, emit
@@ -9,6 +10,12 @@ socketio = SocketIO(messages)
 
 #temporary message storing solution
 chat_history = {}  # { "room_name": [ "user: message", ... ] }
+
+sunset_times = {
+    "general": "5",
+    "sports": "7",
+    "music": "1"
+}
 
 @messages.route('/')
 def index():
@@ -23,7 +30,13 @@ def on_join(data):
     username = data['username']
     room = data['room']
     join_room(room)
-    send(f"{username} has entered the room {room}", to=room)
+
+    # Notify the room that a new user joined
+    send(f"{username} has entered the room {room}", to=room, include_self=False)
+    # Ensure room exists in chat history
+    if room not in chat_history:
+        chat_history[room] = []
+    
 
 
 
@@ -70,8 +83,6 @@ def on_connect():
     #send existing chat history only to the new member
     emit("chat_history", chat_history[room])
 
-    #send it to the room
-    send("A new user joined the general chat.", to=room)
     
 
 if __name__ == '__main__':

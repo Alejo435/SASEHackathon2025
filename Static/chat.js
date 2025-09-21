@@ -2,6 +2,7 @@ const socket = io();
 let currentRoom = null;
 let username = prompt("Enter your username:");
 
+//====================================================Chat room functionality======================================
 
 const messages = document.getElementById("messages"); 
 //getElementId looks through html to find elements with the attribute
@@ -36,6 +37,13 @@ function sendMessage() {
 socket.on("message", (msg) => {
   const bubble = document.createElement("div");
   bubble.classList.add("message-bubble"); //gets CSS formating
+
+  if (msg.startsWith(username + ":")) {
+    bubble.classList.add("message-user");
+  } else {
+    bubble.classList.add("message-bot");
+  }
+
   bubble.textContent = msg;
   messages.appendChild(bubble);
   messages.scrollTop = messages.scrollHeight;
@@ -52,13 +60,18 @@ function addMessage(msg) {
   const bubble = document.createElement("div");
   bubble.classList.add("message-bubble");
 
-  if (msg.startsWith(username + ":")) {
+  // Always add either user or bot class
+  if (msg && msg.startsWith(username + ":")) {
     bubble.classList.add("message-user");
   } else {
-    bubble.classList.add("message-bot"); //gonan be using for when sunset sends photos
+    bubble.classList.add("message-bot");
   }
 
   bubble.textContent = msg;
   messages.appendChild(bubble);
   messages.scrollTop = messages.scrollHeight;
+
 }
+
+
+//====================================================Sunset timer functionality======================================
