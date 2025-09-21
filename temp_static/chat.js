@@ -1,0 +1,64 @@
+const socket = io();
+let currentRoom = null;
+let username = prompt("Enter your username:");
+
+
+const messages = document.getElementById("messages"); 
+//getElementId looks through html to find elements with the attribute
+const input = document.getElementById("messageInput"); 
+
+
+// Join a room
+function joinRoom(room) {
+  if (currentRoom) {
+    socket.emit("leave", { username, room: currentRoom });
+  }
+
+  currentRoom = room;
+  socket.emit("join", { username, room }); //event JS sneds to be used in Flask API
+  document.getElementById("messages").innerHTML = ""; // clear old chat
+}
+
+
+
+//function to send messages from your computer
+function sendMessage() {
+  const msg = input.value;
+  if (msg.trim() !== "") {
+    socket.emit("message", { username, msg }); 
+    //TODO rn frontend fine like this, but when we add selector must change to
+    //socket.emit("message", { username, msg, room: "sports" }); for example
+    input.value = "";
+  }
+}
+
+// Receive messages
+socket.on("message", (msg) => {
+  const bubble = document.createElement("div");
+  bubble.classList.add("message-bubble"); //gets CSS formating
+  bubble.textContent = msg;
+  messages.appendChild(bubble);
+  messages.scrollTop = messages.scrollHeight;
+});
+
+
+//for retreiving past chat history
+socket.on("chat_history", (history) => {
+  history.forEach((msg) => addMessage(msg));
+});
+
+//function to create message bubbles from past messages
+function addMessage(msg) {
+  const bubble = document.createElement("div");
+  bubble.classList.add("message-bubble");
+
+  if (msg.startsWith(username + ":")) {
+    bubble.classList.add("message-user");
+  } else {
+    bubble.classList.add("message-bot"); //gonan be using for when sunset sends photos
+  }
+
+  bubble.textContent = msg;
+  messages.appendChild(bubble);
+  messages.scrollTop = messages.scrollHeight;
+}
