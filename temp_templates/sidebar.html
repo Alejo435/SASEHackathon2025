@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sunset</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='sidebar.css') }}">
+</head>
+<body>
+    <div class="sidebar">
+        <h1 class="sidebar-header">Communities</h1>
+        <div class="tab" onclick="openTab('home')">Community 1</div>
+        <div class="tab" onclick="openTab('chat')">Community 2</div>
+        <div class="tab" onclick="openTab('settings')">Community 3</div>
+    </div>
+
+    <div class="content">
+        <div id="home" class="tab-content">Welcome To Community 1!</div>
+        <div id="chat" class="tab-content" style="display:none;">Welcome To Community 2!</div>
+        <div id="settings" class="tab-content" style="display:none;">Welcome To Community 3!</div>
+      </div>
+
+    <script>
+        function openTab(tabName) {
+        const contents = document.querySelectorAll('.tab-content');
+        contents.forEach(c => c.style.display = 'none');
+        document.getElementById(tabName).style.display = 'block';
+        }
+    </script>
+</body>
+</html>
