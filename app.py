@@ -211,9 +211,9 @@ def create_community():
 chat_history = {}  # { "room_id": [ "user: message", ... ] }
 
 sunset_times = {
-    "com1": 0.5 * 60,
-    "com2": 5 * 60,
-    "com3": 8 * 60
+    "com1": 60,
+    "com2": 60,
+    "com3": 60
 }
 
 
