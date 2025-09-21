@@ -47,7 +47,7 @@ with app.app_context():
 @app.route('/')
 def home():
     if current_user.is_authenticated:
-        return render_template('index.html')
+        return render_template('sidebar.html')
     return redirect(url_for('login'))
 
 
@@ -60,7 +60,7 @@ def login():
         user = Users.query.filter_by(email=email).first()
         if user and check_password_hash(user.password, password):
             login_user(user)
-            return render_template('index.html')
+            return render_template('sidebar.html')
         else:
             flash("Invalid email or password", "danger")
 
