@@ -30,7 +30,7 @@
       margin-bottom: 1.5rem;
       color: #666;
     }
-    a {
+    a, button {
       display: inline-block;
       padding: 0.6rem 1.2rem;
       background: #007BFF;
@@ -38,17 +38,28 @@
       text-decoration: none;
       border-radius: 6px;
       transition: background 0.2s;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
     }
-    a:hover {
+    a:hover, button:hover {
       background: #0056b3;
+    }
+    .actions {
+      margin-top: 1rem;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Hello, World! 👋</h1>
+    <h1>Hello, {{ current_user.first_name }}! 👋</h1>
     <p>Welcome to your index page.</p>
-    <a href="#">Get Started</a>
+    <div class="actions">
+      <a href="#">Get Started</a>
+      <form action="{{ url_for('logout') }}" method="GET" style="display:inline;">
+        <button type="submit">Sign Out</button>
+      </form>
+    </div>
   </div>
 </body>
 </html>

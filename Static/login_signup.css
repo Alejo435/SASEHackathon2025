@@ -121,3 +121,29 @@
     to {opacity: 1; transform: translateY(0);}
   }
   
+  .flash-messages {
+    margin-bottom: 1rem;
+  }
+  
+  .flash {
+    padding: 0.8rem 1rem;
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+  }
+  
+  .flash.success {
+    background-color: #d4edda;
+    color: #155724;
+  }
+  
+  .flash.danger {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+  
+  .flash.info {
+    background-color: #cce5ff;
+    color: #004085;
+  }
+  
