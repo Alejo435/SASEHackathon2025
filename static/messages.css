@@ -1,0 +1,51 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    height: 100vh;
+    background-image: url("https://images.unsplash.com/photo-1702227962580-472018958650?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdW5zZXQlMjBtb3VudGFpbiUyMHJhbmdlJTIwb3JhbmdlfGVufDF8fHx8MTc1ODMxNTE0NXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"); /* replace with your sunset image path */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  
+  .sidebar {
+    width: 200px;
+    background-color: rgba(30, 30, 30, 0.8); 
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+    backdrop-filter: blur(5px); 
+  }
+  .sidebar-header {
+    padding: 12px 20px;
+    font-size: 25px;               
+    color: #ccc;    
+    text-align: left;
+    cursor: default;         
+  }
+  .tab {
+    text-align: center;
+    font-family: "Montserrat";
+    font-size: 20px;
+    padding: 15px 40px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  
+  .tab:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .content {
+    flex: 1;
+    padding: 20px;
+    color: white; 
+    overflow-y: auto;
+  }
+  
+  .tab-content {
+    font-size: 18px;
+  }
+  
