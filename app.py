@@ -236,14 +236,24 @@ def chat():
 #================================================Sunset Countdown==================================================
 def countdown_task():
     """Background task to decrement sunset timers."""
+    with app.app_context():
+        communities = Communities.query.all()
+        # Each community ID maps to 60 seconds
+        sunset_times = {f"com{c.id}": 60 for c in communities}
+
     while True:
-        socketio.sleep(1)  
-        for room in list(sunset_times.keys()):
-            if sunset_times[room] > 0:
+        socketio.sleep(1)  # Sleep 1 second per iteration
+
+        for room, seconds in sunset_times.items():
+            if seconds > 0:
                 sunset_times[room] -= 1
 
-            # Emit to everyone in this room
-            socketio.emit("sunset_timer", {"room": room, "seconds": sunset_times[room]}, to=room)
+            # Emit current timer to all clients in this room
+            socketio.emit(
+                "sunset_timer",
+                {"room": room, "seconds": sunset_times[room]},
+                to=room
+            )
 
 
 # Start background thread
