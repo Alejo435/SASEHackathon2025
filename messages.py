@@ -8,7 +8,7 @@ messages.config['SECRET_KEY'] = 'your_secret'
 socketio = SocketIO(messages)
 
 #temporary message storing solution
-chat_history = {}  # { "room_name": [ "user: message", ... ] }
+chat_history = {}  # { "room_id": [ "user: message", ... ] }
 
 sunset_times = {
     "general": 0.5 * 60,
@@ -108,7 +108,12 @@ def on_connect(room = None):
 
 
 
-    
+@socketio.on("image")
+def handle_image(data):
+    # Rebroadcast to everyone in the same room
+    room = data.get("room", "general")
+    emit("image", data, room=room)
+
 
 #==============================================running API===================================================
 if __name__ == '__main__':
