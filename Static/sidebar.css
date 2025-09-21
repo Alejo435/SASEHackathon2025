@@ -52,7 +52,7 @@ body {
   overflow-y: auto;            /* only this part scrolls */
 }
 .sidebar-footer {
-  padding: 15px;
+  padding: 25px;
   border-top: 1px solid rgba(255, 255, 255, 0.2);
   flex-shrink: 0;              /* pinned at bottom */
 }
