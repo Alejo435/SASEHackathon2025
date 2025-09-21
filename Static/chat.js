@@ -1,3 +1,5 @@
+
+
 const socket = io();
 let currentRoom = null;
 let username = prompt("Enter your username:");
@@ -70,6 +72,7 @@ function addMessage(msg) {
   bubble.textContent = msg;
   messages.appendChild(bubble);
   messages.scrollTop = messages.scrollHeight;
+  
 
 }
 
