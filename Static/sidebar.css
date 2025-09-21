@@ -17,6 +17,15 @@ body {
   flex-direction: column;
   padding-top: 20px;
   backdrop-filter: blur(5px); 
+  overflow-y: auto;        /* enables vertical scrolling */
+  overflow-x: hidden;      /* hide horizontal scroll */
+}
+.sidebar::-webkit-scrollbar {
+  width: 6px;              /* scrollbar width */
+}
+.sidebar::-webkit-scrollbar-thumb {  /* Style Scroll bar */
+  background-color: rgba(255, 255, 255, 0.4); 
+  border-radius: 3px;
 }
 .sidebar-header {
   padding: 12px 20px;
@@ -25,9 +34,14 @@ body {
   text-align: left;
   cursor: default;         
 }
-.sidebar .tab.logout {
-  margin-top: auto;
-  background-color: rgba(255, 0, 0, 0.2);
+.sidebar-tabs {
+  flex: 1;                     /* takes up available middle space */
+  overflow-y: auto;            /* only this part scrolls */
+}
+.sidebar-footer {
+  padding: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;              /* pinned at bottom */
 }
 .tab {
   text-align: center;
@@ -39,7 +53,6 @@ body {
   color: white;
   text-decoration: none;
 }
-
 
 .tab:hover {
   background-color: rgba(255, 255, 255, 0.1);

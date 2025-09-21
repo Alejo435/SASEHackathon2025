@@ -7,13 +7,23 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='sidebar.css') }}">
 </head>
 <body>
+    <!--Header for Communities-->
     <div class="sidebar">
-        <h1 class="sidebar-header">Communities</h1>
-        <div class="tab" onclick="openTab('home')">Home</div>
-        <div class="tab" onclick="openTab('com1')">Community 1</div>
-        <div class="tab" onclick="openTab('com2')">Community 2</div>
-        <div class="tab" onclick="openTab('com3')">Community 3</div>
-        <a href="{{ url_for('logout') }}" class="tab logout">Sign Out</a>
+        <div class="sidebar-header">Communities</div>
+
+        <!--Scrollable list of communities-->
+        <div class="sidebar-tabs">  
+            <div class="tab" onclick="openTab('home')">Home</div>
+            <div class="tab" onclick="openTab('com1')">Community 1</div>
+            <div class="tab" onclick="openTab('com2')">Community 2</div>
+            <div class="tab" onclick="openTab('com3')">Community 3</div>
+            
+
+        </div>
+        <!--Sign out button at the bottom of side bar-->
+        <div class="sidebar-footer">
+            <a href="/logout" class="tab">Sign Out</a>
+        </div>
     </div>
 
     
