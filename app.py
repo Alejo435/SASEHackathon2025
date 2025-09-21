@@ -101,8 +101,10 @@ def signup():
         db.session.add(new_user)
         db.session.commit()
 
-        flash("Account created! Please log in.", "success")
-        return redirect(url_for("login"))
+
+        user = Users.query.filter_by(email=email).first()
+        login_user(user)
+        return home()
 
     # For GET requests, just show the signup page
     return render_template("signup.html")
