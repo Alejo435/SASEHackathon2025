@@ -1,21 +1,21 @@
-from database import Users, Communities
-from flask_sqlalchemy import SQLAlchemy
+from database import db, Users, Communities
 from flask import Flask
-import os
 
-basedir = os.path.abspath(os.path.dirname(__file__))
-
+# Create a temporary Flask app context if needed
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(basedir, 'app.db')}"
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///coraldb.sqlite3'  # Update path if different
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-db = SQLAlchemy()
-
+db.init_app(app)
 
 def clear_database():
     with app.app_context():
-        # Deletes all rows from Users and Communities
+        # Delete all users
         num_users_deleted = db.session.query(Users).delete()
+        # Delete all communities
         num_communities_deleted = db.session.query(Communities).delete()
+        # Commit changes
         db.session.commit()
         print(f"Deleted {num_users_deleted} users and {num_communities_deleted} communities.")
+
+if __name__ == "__main__":
+    clear_database()

@@ -33,10 +33,10 @@ def load_user(user_id):
     return Users.query.get(int(user_id))
 
 def generate_community_code():
-    """
-    Generates a unique 6-digit code, ensures it's not already in the pickle file,
-    stores it back, and returns the new code.
-    """
+    
+    # Generates a unique 6-digit code, ensures it's not already in the pickle file,
+    # stores it back, and returns the new code.
+    
     # Load existing codes or create empty list
     if os.path.exists("instance/community_codes.pkl"):
         with open("instance/community_codes.pkl", "rb") as f:
@@ -231,25 +231,29 @@ def chat():
 
 #================================================Sunset Countdown==================================================
 def countdown_task():
-    """Background task to decrement sunset timers."""
-    with app.app_context():
-        communities = Communities.query.all()
-        # Each community ID maps to 60 seconds
-        sunset_times = {f"com{c.id}": 60 for c in communities}
+    #Background task to decrement sunset timers.
+
+    sunset_times = {}
 
     while True:
-        socketio.sleep(1)  # Sleep 1 second per iteration
+        socketio.sleep(1)
+        with app.app_context():
+                communities = Communities.query.all()
+                for c in communities:
+                    room_name = f"com{c.id}"
+                    
+                    if room_name not in sunset_times:
+                        sunset_times[room_name] = 60  
 
         for room, seconds in sunset_times.items():
             if seconds > 0:
                 sunset_times[room] -= 1
 
-            # Emit current timer to all clients in this room
             socketio.emit(
-                "sunset_timer",
-                {"room": room, "seconds": sunset_times[room]},
-                to=room
-            )
+                    "sunset_timer",
+                    {"room": room, "seconds": sunset_times[room]},
+                    to=room
+                )
 
 
 # Start background thread
