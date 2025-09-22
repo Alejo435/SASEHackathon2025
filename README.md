@@ -8,15 +8,11 @@
 git clone https://github.com/your-username/sunset.git
 cd sunset
 ```
-2. Install npm
-```bash
-npm install
-```
-3. Install Dependencies
+2. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
-4. Run the Program
+3. Run the Program
 ```bash
 python3 app.py
 ```
