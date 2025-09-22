@@ -9,7 +9,7 @@
         color: white;
         backdrop-filter: blur(8px);
         transition: background-color 0.2s ease, border-color 0.2s ease;
-        margin: 8px 0;              /* vertical spacing only - horizontal handled by align/self */
+        margin: 8px 0;              /* vertical spacing only as horizontal handled by align/self */
         font-family: "Arial", sans-serif;
         z-index: 2;
         word-break: break-word;
@@ -26,7 +26,7 @@
 
 
     .message-bot{
-        align-self: flex-start; /* Align to right */
+        align-self: flex-start; 
         text-align: left;
         margin-left: 0;
     }
@@ -75,8 +75,7 @@
         position: relative;
         display: flex;                
         flex-direction: column;
-        /* space for fixed header + bottom input; left/right padding creates the "safe zone" */
-        padding: 60px 24px 90px 24px; /* top right bottom left */
+        padding: 60px 24px 90px 24px; 
         box-sizing: border-box;
         background-size: cover;
         background-position: center;
@@ -105,8 +104,8 @@
     .input-area {
         position: fixed;
         bottom: 0;
-        left: 250px;               /* same sidebar width */
-        right: 24px;               /* match .chat-menu padding-right */
+        left: 250px;              
+        right: 24px;              
         padding: 10px;
         display: flex;
         gap: 10px;
@@ -116,8 +115,8 @@
     }
 
     .input-area input {
-        flex: 1;                 /* expand to fill remaining space */
-        min-width: 0;            /* prevents overflow in flex */
+        flex: 1;                 
+        min-width: 0;            
         padding: 0.5rem 1rem;
         border-radius: 0.5rem;
         border: 1px solid rgba(255,255,255,0.3);
@@ -154,8 +153,8 @@
     .sunset-timer {
         position: fixed; /* keeps it pinned at top */
         top: 8px;
-        left: 250px;               /* adjust to your sidebar width */
-        right: 24px;               /* align with .chat-menu padding-right */
+        left: 250px;             
+        right: 24px;              
         height: 60px;
         z-index: 100; /* ensures it stays above bubbles */
         text-align: center;
@@ -168,7 +167,7 @@
         border: 1px solid rgba(255,255,255,0.12);
         border-radius: 0.4rem;
         display: flex;
-        align-items: center; /* Centers content vertically */
+        align-items: center; /* centers content vertically */
         justify-content: center;
     }
 

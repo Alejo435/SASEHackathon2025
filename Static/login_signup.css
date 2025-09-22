@@ -21,7 +21,7 @@
     z-index: -1;
   }
   
-  /* Auth Container */
+  /* Container for login entries + sign up */
   .auth-container {
     display: flex;
     align-items: center;

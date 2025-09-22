@@ -22,10 +22,10 @@ socketio = SocketIO(app)
 
 db.init_app(app)
 
-# ---- Flask-Login setup ----
+# Flask Login setup 
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = "login"   # redirect unauthorized users here
+login_manager.login_view = "login"   # redirect uanuthorized users here
 
 
 @login_manager.user_loader
@@ -34,7 +34,7 @@ def load_user(user_id):
 
 def generate_community_code():
     
-    # Generates a unique 6-digit code, ensures it's not already in the pickle file,
+    # Generates a unique 6 digit code, ensures it's not already in the pickle file,
     # stores it back, and returns the new code.
     
     # Load existing codes or create empty list
@@ -57,11 +57,11 @@ def generate_community_code():
 
     return code
 
-# ---- Initialize DB with sample user ----
+# Initialize DB with sample user 
 with app.app_context():
     db.create_all()
 
-# ---- Routes ----
+#  Routes 
 @app.route('/')
 def home():
     if current_user.is_authenticated:
