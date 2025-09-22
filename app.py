@@ -210,11 +210,7 @@ def create_community():
 
 chat_history = {}  # { "room_id": [ "user: message", ... ] }
 
-sunset_times = {
-    "com1": 60,
-    "com2": 60,
-    "com3": 60
-}
+
 
 
 
@@ -262,7 +258,13 @@ socketio.start_background_task(countdown_task)
 
 
 
-#====================================================Socket/JS Integration===========================================
+#====================================================Socket/JS Integration===========================================\
+sunset_times = {
+    "com1": 60,
+    "com2": 60,
+    "com3": 60
+}
+
 @socketio.on('join')
 def on_join(data): 
     #data is what JS sends, in this case "message" is event name and {username, room} is object
@@ -278,9 +280,13 @@ def on_join(data):
         chat_history[room] = []
 
 
+    if room not in sunset_times:
+        sunset_times[room] = 60 #default sunset time if not in dict
+
+
     emit("chat_history", chat_history[room], to=request.sid)
 
-    seconds = sunset_times.get(room, 0)
+    seconds = sunset_times[room]
     emit("sunset_timer", {"room": room, "seconds": seconds})
     
     
